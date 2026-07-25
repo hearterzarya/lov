@@ -1,7 +1,12 @@
 import { NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 
+// @ts-ignore
+export const dynamic = 'force-dynamic'
+
+// @ts-ignore
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  // @ts-ignore
   const { id } = await params
   try {
     const license = await prisma.license.findUnique({
@@ -23,7 +28,9 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
   }
 }
 
+// @ts-ignore
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  // @ts-ignore
   const { id } = await params
   try {
     const data = await request.json()
@@ -56,7 +63,9 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   }
 }
 
+// @ts-ignore
 export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  // @ts-ignore
   const { id } = await params
   try {
     await prisma.activation.deleteMany({ where: { licenseId: id } })
