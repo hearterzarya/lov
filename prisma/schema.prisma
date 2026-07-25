@@ -1,0 +1,103 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model License {
+  id              String    @id @default(cuid())
+  licenseKey      String    @unique
+  orderId         String?   @unique
+  customerEmail   String
+  customerName    String
+  customerPhone   String
+
+  // Product info
+  planType        String    // LIFETIME | YEARLY
+  seats           Int       @default(1)
+  maxSeats        Int       @default(5)
+
+  // Activation
+  activatedAt     DateTime?
+  activatedBy     String?   // HW_ID
+  activations     Activation[]
+
+  // Hardware fingerprint (current)
+  currentHW       String?
+
+  // Status
+  status          String    @default("ACTIVE") // ACTIVE | SUSPENDED | EXPIRED | REVOKED
+  banned          Boolean   @default(false)
+  banReason       String?
+
+  // Timestamps
+  validFrom       DateTime  @default(now())
+  expiresAt       DateTime?
+  lastHeartbeat   DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // Audit
+  notes           String?
+  createdBy       String?
+
+  // Relations
+  auditLogs       AuditLog[]
+  webhooks        WebhookLog[]
+
+  @@index([licenseKey])
+  @@index([customerEmail])
+  @@index([status])
+  @@index([orderId])
+  @@index([activatedBy])
+}
+
+model Activation {
+  id              String   @id @default(cuid())
+  licenseId       String
+  hwId            String
+  platform        String   // windows | mac | linux | unknown
+  browserName     String?
+  browserVersion  String?
+  activatedAt     DateTime @default(now())
+  lastSeen        DateTime @default(now())
+  isActive        Boolean  @default(true)
+
+  license         License   @relation(fields: [licenseId], references: [id], onDelete: Cascade)
+
+  @@index([licenseId])
+  @@index([hwId])
+  @@unique([licenseId, hwId])
+}
+
+model AuditLog {
+  id          String   @id @default(cuid())
+  licenseId   String
+  action      String   // ACTIVATED | DEACTIVATED | REVOKED | SUSPENDED | REACTIVATED | HEARTBEAT | ADMIN_EDIT
+  details     String?
+  ipAddress   String?
+  userAgent   String?
+  performedBy String?  // admin email or system
+  createdAt   DateTime @default(now())
+
+  license     License   @relation(fields: [licenseId], references: [id], onDelete: Cascade)
+
+  @@index([licenseId])
+  @@index([createdAt])
+}
+
+model WebhookLog {
+  id          String   @id @default(cuid())
+  licenseId   String?
+  event       String   // LICENSE_ACTIVATED | LICENSE_REVOKED | etc.
+  payload     String   // JSON
+  status      String   // SENT | FAILED | RETRY
+  response    String?
+  createdAt   DateTime @default(now())
+
+  license     License?  @relation(fields: [licenseId], references: [id], onDelete: SetNull)
+
+  @@index([createdAt])
+}
