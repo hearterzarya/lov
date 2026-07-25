@@ -1,5 +1,7 @@
 {
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/" }
-  ]
+  "build": {
+    "env": {
+      "PRISMA_QUERY_ENGINE_TYPE": "binary"
+    }
+  }
 }
