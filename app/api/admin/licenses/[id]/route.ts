@@ -1,13 +1,10 @@
 import { NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 
-// @ts-ignore
 export const dynamic = 'force-dynamic'
 
-// @ts-ignore
-export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
-  // @ts-ignore
-  const { id } = await params
+export async function GET(request: Request, context: any) {
+  const { id } = await context.params
   try {
     const license = await prisma.license.findUnique({
       where: { id },
@@ -28,10 +25,8 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
   }
 }
 
-// @ts-ignore
-export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
-  // @ts-ignore
-  const { id } = await params
+export async function PATCH(request: Request, context: any) {
+  const { id } = await context.params
   try {
     const data = await request.json()
     const { status: newStatus, banned, banReason, seats, notes } = data
@@ -63,10 +58,8 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   }
 }
 
-// @ts-ignore
-export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
-  // @ts-ignore
-  const { id } = await params
+export async function DELETE(request: Request, context: any) {
+  const { id } = await context.params
   try {
     await prisma.activation.deleteMany({ where: { licenseId: id } })
     await prisma.auditLog.deleteMany({ where: { licenseId: id } })

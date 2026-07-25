@@ -1,6 +1,4 @@
-// @ts-ignore - Prisma 7 type re-export issue on serverless
 import { PrismaClient } from '@prisma/client'
-import { PrismaPg } from '@prisma/adapter-pg'
 
 declare global {
   // eslint-disable-next-line no-var
@@ -8,12 +6,11 @@ declare global {
 }
 
 function createPrismaClient() {
-  const connectionString = process.env.DATABASE_URL
-  if (!connectionString) {
-    throw new Error('DATABASE_URL is not set')
-  }
-  const adapter = new PrismaPg({ connectionString })
-  return new PrismaClient({ adapter })
+  return new PrismaClient({
+    log: process.env.NODE_ENV === 'development'
+      ? (['query', 'error', 'warn'] as const)
+      : (['error'] as const),
+  })
 }
 
 const prisma = globalThis.prisma ?? createPrismaClient()
