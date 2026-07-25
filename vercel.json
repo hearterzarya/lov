@@ -1,1 +1,10 @@
-{}
+{
+  "build": {
+    "env": {
+      "NODE_ENV": "production"
+    }
+  },
+  "framework": "nextjs",
+  "regions": ["iad1"],
+  "outputFileTracingRoot": "."
+}
