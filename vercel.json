@@ -4,7 +4,5 @@
       "NODE_ENV": "production"
     }
   },
-  "framework": "nextjs",
-  "regions": ["iad1"],
-  "outputFileTracingRoot": "."
+  "framework": "nextjs"
 }
