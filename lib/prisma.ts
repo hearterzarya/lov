@@ -1,3 +1,4 @@
+// @ts-ignore - Prisma 7 type re-export issue on serverless
 import { PrismaClient } from '@prisma/client'
 import { PrismaPg } from '@prisma/adapter-pg'
 
